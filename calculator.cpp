@@ -93,7 +93,7 @@ void Parser::expressionList() {
 void Parser::expressionA() { termA(); expressionB(); }
 
 void Parser::expressionB() {
-    switch (scanner.nextToken()) {
+    switch (scanner.nextToken()) { 
         case T_PLUS: scanner.eatToken(T_PLUS); termA(); expressionB(); break;
         case T_MINUS: scanner.eatToken(T_MINUS); termA(); expressionB(); break;
         default: break; // epsilon transition, do nothing.

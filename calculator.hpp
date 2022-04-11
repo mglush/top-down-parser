@@ -5,6 +5,7 @@
 
 #include "helpers.hpp"
 #include <climits>
+#include <optional>
 
 //------------------------------------------------------------------------------------------
 // SCANNER DEFINITION
