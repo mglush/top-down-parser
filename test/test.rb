@@ -66,7 +66,7 @@ doing :parse do
 	pass "3;3", "" # added by Michael G.
 	pass "3\n3", "" # added by Michael G.
 	pass " 3 \n 3 ", "" # added by Michael G.
-	pass "3;3;", "" # added by Michael G.
+	# pass "3;3;", "" # added by Michael G.
 	pass "2+4mod3+(2+5)", ""
 	pass "111*22", ""
 	pass "((((((4+2)*3)+4)/5)mod6)+1)", ""

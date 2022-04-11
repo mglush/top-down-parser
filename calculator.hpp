@@ -37,7 +37,7 @@ class Parser {
     Scanner scanner;
     
     bool evaluate;
-    int result;
+    long result;
 
     void start();
     void expressionList();
