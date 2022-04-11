@@ -40,8 +40,7 @@ class Parser {
     int result;
 
     void start();
-    void expressionListA();
-    void expressionListB();
+    void expressionList();
     void expressionA();
     void expressionB();
     void termA();

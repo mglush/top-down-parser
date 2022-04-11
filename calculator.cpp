@@ -81,11 +81,9 @@ Parser::Parser(bool eval) : evaluate(eval), result(0) { }
 
 void Parser::parse() { start(); }
 
-void Parser::start() { expressionListA(); }
+void Parser::start() { expressionA(); expressionList(); }
 
-void Parser::expressionListA() { expressionA(); expressionListB(); }
-
-void Parser::expressionListB() {
+void Parser::expressionList() {
     switch (scanner.nextToken()) {
         case T_SEMICOLON: scanner.eatToken(T_SEMICOLON); expressionA(); break;
         default: break; // epsilon transition, do nothing.
