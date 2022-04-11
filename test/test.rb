@@ -62,9 +62,6 @@ doing :parse do
 	pass "3+2", "" # added by Michael G.
 	pass " 3 + 2 ", "" # added by Michael G.
 	pass "2+4*3+3", "" # added by Michael G.
-	pass "2+4mod3+(2+5)", "" # added by Michael G.
-	pass "111*22", "" # added by Michael G.
-	pass "((((((4+2)*3)+4)/5)mod6)+1)", "" # added by Michael G.
 	pass "123456789", "" # added by Michael G.
 	pass "3;3", "" # added by Michael G.
 	pass "3\n3", "" # added by Michael G.
