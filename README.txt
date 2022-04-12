@@ -19,4 +19,8 @@ Some problems encountered along the way:
 
 3) Parser problems (with -e flag):
     - the hardest part of the project for me.
-    - 
+    - figuring out how to construct a polish post-order notation string for expression evaluation was incredibly tedious.
+        - I did not want to build an unnecessary parse tree, so I tried to add the symbols into a string as I expanded the CFG.
+        - this was done in a post-order type of way (first things were expanded, then we added the current symbol to the string.)
+        - at the end, I used the polish post-order notation processing algorithm (using the stack) to compute the expressions.
+        - left-associativty is giving me trouble now that I am half-way done through implementing the above description.

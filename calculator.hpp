@@ -5,7 +5,7 @@
 
 #include "helpers.hpp"
 #include <climits>
-#include <optional>
+#include <vector>
 
 //------------------------------------------------------------------------------------------
 // SCANNER DEFINITION
@@ -36,9 +36,9 @@ public:
 
 class Parser {
     Scanner scanner;
-    
+
     bool evaluate;
-    long result;
+    std::vector<std::string> polishPostfixNotation;
 
     void start();
     void expressionList();
@@ -47,6 +47,11 @@ class Parser {
     void termA();
     void termB();
     void factor();
+
+    // prints the result of the evaluated expression.
+    // throws indexOutOfBoundsError to std::cerr if result > INT_MAX.
+    // throws a divideByZeroError if division by zero occurs anywhere in the expression.
+    void polishPostfixEvaluation(std::vector<std::string> polishPostfixNotation);
     
 public:
     void parse();
