@@ -5,7 +5,7 @@
 
 #include "helpers.hpp"
 #include <climits>
-#include <vector>
+#include <stack>
 
 //------------------------------------------------------------------------------------------
 // SCANNER DEFINITION
@@ -19,11 +19,9 @@ class Scanner {
 
 public:
     Token nextToken();
-    void eatToken(Token);
-
-    // helper function for when a number is encountered.
     Token recordNum();
-
+    void eatToken(Token);
+    
     int lineNumber();
     int getNumberValue();
     
@@ -38,7 +36,8 @@ class Parser {
     Scanner scanner;
 
     bool evaluate;
-    std::vector<std::string> polishPostfixNotation;
+    std::stack<std::string> my_stack;
+    std::string final_result;
 
     void start();
     void expressionList();
@@ -47,11 +46,6 @@ class Parser {
     void termA();
     void termB();
     void factor();
-
-    // prints the result of the evaluated expression.
-    // throws indexOutOfBoundsError to std::cerr if result > INT_MAX.
-    // throws a divideByZeroError if division by zero occurs anywhere in the expression.
-    void polishPostfixEvaluation(std::vector<std::string> polishPostfixNotation);
     
 public:
     void parse();

@@ -3,7 +3,6 @@
 
 #include "calculator.hpp"
 #include <iostream>
-#include <stack>
 
 //---------------------------------------------
 // Scanner implementation
@@ -82,8 +81,10 @@ int Scanner::getNumberValue() { return this->value; }
 Parser::Parser(bool eval) : evaluate(eval) { }
 
 void Parser::parse() {
-    start(); 
-    if (this->evaluate) { this->polishPostfixEvaluation(this->polishPostfixNotation); }
+    start();
+    if (this->evaluate) {
+        std::cout << this->final_result << this->my_stack.top() << "\n";
+    }
 }
 
 void Parser::start() { expressionA(); expressionList(); }
@@ -91,10 +92,11 @@ void Parser::start() { expressionA(); expressionList(); }
 void Parser::expressionList() {
     switch (scanner.nextToken()) {
         case T_SEMICOLON: scanner.eatToken(T_SEMICOLON);
-                        if (this->evaluate) { this->polishPostfixNotation.push_back(";"); }
-                        expressionA();
-                        expressionList();
-                        break;
+                        if (this->evaluate) {
+                            this->final_result += my_stack.top() + "\n";
+                            my_stack.pop();
+                        }
+                        expressionA(); expressionList(); break;
         default: break; // epsilon transition, do nothing.
     }
 }
@@ -104,13 +106,24 @@ void Parser::expressionA() { termA(); expressionB(); }
 void Parser::expressionB() {
     switch (scanner.nextToken()) { 
         case T_PLUS: scanner.eatToken(T_PLUS); termA();
-                    if (this->evaluate) { this->polishPostfixNotation.push_back("+"); }
-                    expressionB();
-                    break;
+                    if (this->evaluate) {
+                        long temp2 = std::stoi(my_stack.top());
+                        my_stack.pop();
+                        long temp1 = std::stoi(my_stack.top());
+                        my_stack.pop();
+                        if (INT_MAX - temp2 <= temp1) { outOfBoundsError(scanner.lineNumber(), temp1 + temp2); }
+                        else { this->my_stack.push(std::to_string(temp1 + temp2)); }
+                    }
+                    expressionB(); break;
         case T_MINUS: scanner.eatToken(T_MINUS); termA();
-                    if (this->evaluate) { this->polishPostfixNotation.push_back("-"); }
-                    expressionB();
-                    break;
+                    if (this->evaluate) {
+                        long temp2 = std::stoi(my_stack.top());
+                        my_stack.pop();
+                        long temp1 = std::stoi(my_stack.top());
+                        my_stack.pop();
+                        this->my_stack.push(std::to_string(temp1 - temp2));
+                    }
+                    expressionB(); break;
         default: break; // epsilon transition, do nothing.
     }
 }
@@ -120,17 +133,34 @@ void Parser::termA() { factor(); termB(); }
 void Parser::termB() {
     switch (scanner.nextToken()) {
         case T_MULTIPLY: scanner.eatToken(T_MULTIPLY); factor();
-                        if (this->evaluate) { this->polishPostfixNotation.push_back("*"); }
-                        termB();
-                        break;
+                        if (this->evaluate) {
+                            long temp2 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            long temp1 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            if (INT_MAX < temp1 * temp2) { outOfBoundsError(scanner.lineNumber(), temp1 * temp2); }
+                            else { this->my_stack.push(std::to_string(temp1 * temp2)); }
+                        }
+                        termB(); break;
         case T_DIVIDE: scanner.eatToken(T_DIVIDE); factor();
-                        if (this->evaluate) { this->polishPostfixNotation.push_back("/"); }
-                        termB();
-                        break;
+                        if (this->evaluate) {
+                            long temp2 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            long temp1 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            if (temp2 == 0) { divideByZeroError(scanner.lineNumber(), temp1); }
+                            else { this->my_stack.push(std::to_string(temp1 / temp2)); }
+                        }
+                        termB(); break;
         case T_MODULO: scanner.eatToken(T_MODULO); factor();
-                        if (this->evaluate) { this->polishPostfixNotation.push_back("mod"); }
-                        termB();
-                        break;
+                        if (this->evaluate) {
+                            long temp2 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            long temp1 = std::stoi(my_stack.top());
+                            my_stack.pop();
+                            this->my_stack.push(std::to_string(temp1 % temp2));
+                        }
+                        termB(); break;
         default: break; // epsilon transition, do nothing.
     }
 }
@@ -138,51 +168,11 @@ void Parser::termB() {
 void Parser::factor() {
     switch (scanner.nextToken()) {
         case T_NUMBER: scanner.eatToken(T_NUMBER);
-                        if (this->evaluate) { this->polishPostfixNotation.push_back(std::to_string(scanner.getNumberValue())); }
+                        if (this->evaluate) {
+                            my_stack.push(std::to_string(scanner.getNumberValue()));
+                        }
                         break;
         case T_OPENPAREN: scanner.eatToken(T_OPENPAREN); expressionA(); scanner.eatToken(T_CLOSEPAREN); break;
         default: parseError(scanner.lineNumber(), scanner.nextToken());
     }
-}
-
-void Parser::polishPostfixEvaluation(std::vector<std::string> toBeEvaluated) {
-    std::stack<std::string> my_stack;
-    std::string res;
-    std::string temp_str;
-    long result;
-    int temp_line_num = 1; // so that errors throw the correct line number in this function.
-
-    for (int i = 0; i < toBeEvaluated.size(); i++) {
-        temp_str = toBeEvaluated[i];
-
-        if (temp_str == ";") {
-            res += my_stack.top() + "\n";
-            my_stack.pop();
-            temp_line_num++;
-        }
-        else if (temp_str == "+" || temp_str == "-" || temp_str == "*" || temp_str == "/" ||  temp_str == "mod") {
-            long temp2 = std::stoi(my_stack.top());
-            my_stack.pop();
-            long temp1 = std::stoi(my_stack.top());
-            my_stack.pop();
-            if (temp_str == "+") {
-                if (INT_MAX - temp2 <= temp1) { outOfBoundsError(temp_line_num, temp1 + temp2); }
-                else { result = temp1 + temp2; }
-            }
-            else if (temp_str == "*") {
-                if (INT_MAX < temp1 * temp2) { outOfBoundsError(temp_line_num, temp1 * temp2); }
-                else { result = temp1 * temp2; }
-            }
-            else if (temp_str == "/") {
-                if (temp2 == 0) { divideByZeroError(temp_line_num, temp1); }
-                else { result = temp1 / temp2; }
-            }
-            else if (temp_str == "-") { result = temp1 - temp2; }
-            else if (temp_str == "mod") { result = temp1 % temp2; }
-            my_stack.push(std::to_string(result));
-        }
-        else { my_stack.push(temp_str); }
-    }
-    if (!my_stack.empty()) { res += my_stack.top(); my_stack.pop(); }
-    std::cout << res << "\n";
 }
