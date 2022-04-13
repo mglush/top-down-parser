@@ -1,42 +1,43 @@
+// calculator.cpp
+// Michael Glushchenko, 9403890.
 
 #include "calculator.hpp"
-#include <string>
-#include <cmath>
 #include <iostream>
 
+//---------------------------------------------
 // Scanner implementation
+//---------------------------------------------
 
 Scanner::Scanner() : line(1), value(0), charPos(0) {
     std::getline(std::cin, this->currStr);
-    if (this->currStr.substr(0,3) == "-n ") { this->currStr = this->currStr.substr(3); }
+    this->currStr = this->currStr.substr(3);
 }
 
 Token Scanner::nextToken() {
     if (std::isspace(this->currStr[this->charPos])) { this->charPos++; return this->nextToken(); }
-    if (std::isdigit(this->currStr[this->charPos])) { return this->recordNum(); }
-    switch (this->currStr[this->charPos]) {
-        case '+': return T_PLUS;
-        case '-': return T_MINUS;
-        case '*': return T_MULTIPLY;
-        case '/': return T_DIVIDE;
-        case '(': return T_OPENPAREN;
-        case ')': return T_CLOSEPAREN;
-        case ';': return T_SEMICOLON;
-        case 'm': if (this->charPos + 1 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
-                    else if (this->currStr[this->charPos + 1] == 'o') {
-                        if (this->charPos + 2 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
-                        else if (this->currStr[this->charPos + 2] == 'd') { return T_MODULO; }
-                        else { scanError(this->line, this->currStr[this->charPos + 2]); }
-                    } else { scanError(this->line, this->currStr[this->charPos + 1]); }
+    else if (std::isdigit(this->currStr[this->charPos])) { return this->recordNum(); }
+    else if (this->currStr[this->charPos] == '+') { return T_PLUS; }
+    else if (this->currStr[this->charPos] == '-') { return T_MINUS; }
+    else if (this->currStr[this->charPos] == '*') { return T_MULTIPLY; }
+    else if (this->currStr[this->charPos] == '/') { return T_DIVIDE; }
+    else if (this->currStr[this->charPos] == '(') { return T_OPENPAREN; }
+    else if (this->currStr[this->charPos] == ')') { return T_CLOSEPAREN; }
+    else if (this->currStr[this->charPos] == ';') { return T_SEMICOLON; }
+    else if (this->currStr[this->charPos] == 'm') {
+        if (this->charPos + 1 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
+        if (this->currStr[this->charPos + 1] == 'o') {
+            if (this->charPos + 2 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
+            if (this->currStr[this->charPos + 2] == 'd') { return T_MODULO; }
+            else { scanError(this->line, this->currStr[this->charPos + 2]); }
+        } else { scanError(this->line, this->currStr[this->charPos + 1]); }
     }
-    if (this->charPos >= this->currStr.length()) {
+    else if (this->charPos >= this->currStr.length()) {
         std::getline(std::cin, this->currStr);
         this->charPos = 0;
         if (this->currStr.length() > 0) { return this->nextToken(); }
         else { return T_EOF; }
     }
     else { scanError(this->line, this->currStr[this->charPos]); }
-    return T_NEWLN; // should never reach here.
 }
 
 // helper function for when a number is encountered.
@@ -47,7 +48,9 @@ Token Scanner::recordNum() {
     
     while (this->currStr.length() - 1 >= temp + 1
         && std::isdigit(this->currStr[temp + 1])
-        && !std::isspace(this->currStr[temp + 1])) { result += this->currStr[temp + 1]; temp++; }
+        && !std::isspace(this->currStr[temp + 1])) { 
+        result += this->currStr[temp + 1]; temp++;
+    }
     
     this->value = std::stoi(result);
     return T_NUMBER;
@@ -71,15 +74,17 @@ int Scanner::lineNumber() { return this->line; }
 
 int Scanner::getNumberValue() { return this->value; }
 
-//-----------------------
+//---------------------------------------------
 // Parser implementation
-//-----------------------
+//---------------------------------------------
 
 Parser::Parser(bool eval) : evaluate(eval) { }
 
 void Parser::parse() {
     start();
-    if (this->evaluate) { std::cout << this->final_result << this->my_stack.top() << "\n"; }
+    if (this->evaluate) {
+        std::cout << this->final_result << this->my_stack.top() << "\n";
+    }
 }
 
 void Parser::start() { expressionA(); expressionList(); }
@@ -106,7 +111,7 @@ void Parser::expressionB() {
                         my_stack.pop();
                         long temp1 = std::stoi(my_stack.top());
                         my_stack.pop();
-                        if (INT_MAX - temp2 < temp1) { outOfBoundsError(scanner.lineNumber(), temp1 + temp2); }
+                        if (INT_MAX - temp2 <= temp1) { outOfBoundsError(scanner.lineNumber(), temp1 + temp2); }
                         else { this->my_stack.push(std::to_string(temp1 + temp2)); }
                     }
                     expressionB(); break;
