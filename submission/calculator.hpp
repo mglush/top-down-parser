@@ -1,12 +1,15 @@
+// calculator.hpp
+// Michael Glushchenko, 9403890.
+
 #pragma once
 
 #include "helpers.hpp"
 #include <climits>
 #include <stack>
 
-//--------------------
+//------------------------------------------------------------------------------------------
 // SCANNER DEFINITION
-//--------------------
+//------------------------------------------------------------------------------------------
 
 class Scanner {
     int line;
@@ -16,19 +19,18 @@ class Scanner {
 
 public:
     Token nextToken();
+    Token recordNum();
     void eatToken(Token);
     
     int lineNumber();
     int getNumberValue();
-
-    Token recordNum();
     
     Scanner();
 };
 
-//-------------------
+//------------------------------------------------------------------------------------------
 // PARSER DEFINITION
-//-------------------
+//------------------------------------------------------------------------------------------
 
 class Parser {
     Scanner scanner;

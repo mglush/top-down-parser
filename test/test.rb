@@ -66,7 +66,7 @@ doing :parse do
 	pass "3;3", "" # added by Michael G.
 	pass "3\n3", "" # added by Michael G.
 	pass " 3 \n 3 ", "" # added by Michael G.
-	# pass "3;3;", "" # added by Michael G.
+	pass "3;3;3;3;3", "" # added by Michael G.
 	pass "2+4mod3+(2+5)", ""
 	pass "111*22", ""
 	pass "((((((4+2)*3)+4)/5)mod6)+1)", ""
@@ -92,6 +92,11 @@ doing :eval do
 	pass "81mod3+10/3*3mod3", "0"
 	pass "5+2mod3+22*7+(16+(2*4))", "185"
 	pass "5+8mod(0-3)","7"
+	pass "1+1;2+2;3+3;4+4;5+5", "2\n4\n6\n8\n10" # added by Michael G.
+	fail "1+1;2+2;3+3;4+4;5/(5-5)", "Semantic error: dividing 5 with zero at line 5" # added by Michael G.
+	fail "1+1;2+2;3+3;5/(5-5);5/(5-5)", "Semantic error: dividing 5 with zero at line 4" # added by Michael G.
+	fail "1+1;2+2;5/(5-5);5/(5-5);5/(5-5)", "Semantic error: dividing 5 with zero at line 3" # added by Michael G.
+	fail "1+1;5/(5-5);5/(5-5);5/(5-5);5/(5-5)", "Semantic error: dividing 5 with zero at line 2" # added by Michael G.
 	fail "1534893*5555550", "Semantic error: number 8527174806150 out of bounds at line 1"
 	fail "1/2;\n3/0", "Semantic error: dividing 3 with zero at line 2"
 	fail "3+3;\n3/(3-3)", "Semantic error: dividing 3 with zero at line 2"
