@@ -30,3 +30,9 @@ Some problems encountered along the way:
     - Instead of having a function evaluate the expression at the end, we can implemnent a stack into our Parser, and evaluate the
     expressions on the go, printing the result to cout every time we encounter a stack with 1 element left or a semicolon.
     - the final challenge I encountered through this project was not printing any output until we know there are no errors present in the entire arithmetic expression that was piped into the program.
+
+5) INCREDIBLE DIFFICULTY IN FIGURING OUT WHY THIS WORKED ON MAC BUT NOT LINUX
+    - solution ended up being that the -n flag is not allowed on MacOS, and thus is simply passed in as a part of cin (which I then succesfully filtered out every time).
+        - the problem was that on linux this flag is actually read by the shell and does not go into the cin.
+        - the result of the shell actually reading the -n flag on Linux is that my getline() code and the code that returns the T_EOF token needed to be tweaked
+        from checking whether getline() produces an empty string to checking whether getline() produces the same string twice in a row.

@@ -8,6 +8,8 @@
 
 Scanner::Scanner() : line(1), value(0), charPos(0) {
     std::getline(std::cin, this->currStr);
+    // for the macOS to run properly, -n needs to be taken out from cin first.
+    // no need to worry about this on Linux, as the -n flag gets interpreted by the shell.
     if (this->currStr.substr(0,3) == "-n ") { this->currStr = this->currStr.substr(3); }
 }
 
