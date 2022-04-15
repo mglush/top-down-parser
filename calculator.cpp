@@ -12,16 +12,11 @@ Scanner::Scanner() : line(1), value(0), charPos(0) {
 }
 
 Token Scanner::nextToken() {
-    if (this->currStr.length() == 0) {
-        if (std::getline(std::cin, this->currStr) && this->currStr.length() == 0) {
-            return T_EOF;
-        }
-    }
     if (this->charPos >= this->currStr.length()) {
+        std::string before = this->currStr;
         std::getline(std::cin, this->currStr);
-        this->charPos = 0;
-        if (this->currStr.length() > 0) { return this->nextToken(); }
-        else { return T_EOF; }
+        if (before == this->currStr) { return T_EOF; }
+        else { this->charPos = 0; return this->nextToken(); }
     }
     else if (std::isspace(this->currStr[this->charPos])) { this->charPos++; return this->nextToken(); }
     else if (std::isdigit(this->currStr[this->charPos])) { return this->recordNum(); }
@@ -33,7 +28,7 @@ Token Scanner::nextToken() {
     else if (this->currStr[this->charPos] == ')') { return T_CLOSEPAREN; }
     else if (this->currStr[this->charPos] == ';') { return T_SEMICOLON; }
     else if (this->currStr[this->charPos] == 'm') {
-        if (this->charPos + 1 > (unsigned) this->currStr.length()) {
+        if (this->charPos + 1 >= (unsigned) this->currStr.length()) {
             scanError(this->line, this->currStr[this->charPos]);
         }
         else if (this->currStr[this->charPos + 1] == 'o') {
@@ -52,11 +47,10 @@ Token Scanner::nextToken() {
 Token Scanner::recordNum() {
     std::string result;
     unsigned int temp = this->charPos;
-    result += this->currStr[temp];
     
-    while (this->currStr.length() > temp + 1
-        && std::isdigit(this->currStr[temp + 1])
-        && !std::isspace(this->currStr[temp + 1])) { result += this->currStr[temp + 1]; temp++; }
+    while (this->currStr.length() > temp
+        && std::isdigit(this->currStr[temp])
+        && !std::isspace(this->currStr[temp])) { result += this->currStr[temp]; temp++; }
     
     this->value = std::stoi(result);
     return T_NUMBER;
@@ -72,7 +66,7 @@ void Scanner::eatToken(Token toConsume) {
         else if (next == T_MODULO) { this->charPos += 3; }
         else if (next == T_NUMBER) { this->charPos += std::to_string(this->value).length(); }
         else if (next == T_SEMICOLON) { this->line++; this->charPos++; }
-        else if (next == T_EOF) { /* do nothing. */ }
+        else { }
     }
 }
 
@@ -180,3 +174,4 @@ void Parser::factor() {
         default: parseError(scanner.lineNumber(), scanner.nextToken());
     }
 }
+

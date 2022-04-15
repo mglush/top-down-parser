@@ -1,11 +1,10 @@
 require_relative 'testlib'
 
 prepare do
-	executable "./calculator"
+	executable "./oracle"
 	testing "./calculator"
 
-
-	to :scan, "-s"
+    to :scan, "-s"
 	to :parse, ""
 	to :eval, "-e"
 end
@@ -25,9 +24,9 @@ doing :scan do
 	pass "0++", "number0 + +" # added by Michael G.
 	pass " 0++ ", "number0 + +" # added by Michael G.
 	pass "123456789", "number123456789" # added by Michael G.
-	pass "3;3", "number3 number3" # added by Michael G.
-	pass "3\n3", "number3 number3" # added by Michael G.
-	pass " 3 \n 3 ", "number3 number3" # added by Michael G.
+	pass "3;\n3", "number3 number3" # added by Michael G.
+    pass "3 \n 3", "number3 number3" # added by Michael G.
+    pass "3;3", "number3 number3" # added by Michael G.
 	pass "3;3;", "number3 number3" # added by Michael G.
 	fail "g3;g3;g3;g", "Scan error: found invalid character g at line 1" # added by Michael G.
 	fail "3;g3;g3;g", "Scan error: found invalid character g at line 2" # added by Michael G.
