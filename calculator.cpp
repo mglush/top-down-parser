@@ -12,28 +12,37 @@ Scanner::Scanner() : line(1), value(0), charPos(0) {
 }
 
 Token Scanner::nextToken() {
-    if (std::isspace(this->currStr[this->charPos])) { this->charPos++; return this->nextToken(); }
-    if (std::isdigit(this->currStr[this->charPos])) { return this->recordNum(); }
-    switch (this->currStr[this->charPos]) {
-        case '+': return T_PLUS;
-        case '-': return T_MINUS;
-        case '*': return T_MULTIPLY;
-        case '/': return T_DIVIDE;
-        case '(': return T_OPENPAREN;
-        case ')': return T_CLOSEPAREN;
-        case ';': return T_SEMICOLON;
-        case 'm': if (this->charPos + 1 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
-                    else if (this->currStr[this->charPos + 1] == 'o') {
-                        if (this->charPos + 2 > this->currStr.length() - 1) { scanError(this->line, this->currStr[this->charPos]); }
-                        else if (this->currStr[this->charPos + 2] == 'd') { return T_MODULO; }
-                        else { scanError(this->line, this->currStr[this->charPos + 2]); }
-                    } else { scanError(this->line, this->currStr[this->charPos + 1]); }
+    if (this->currStr.length() == 0) {
+        if (std::getline(std::cin, this->currStr) && this->currStr.length() == 0) {
+            return T_EOF;
+        }
     }
     if (this->charPos >= this->currStr.length()) {
         std::getline(std::cin, this->currStr);
         this->charPos = 0;
         if (this->currStr.length() > 0) { return this->nextToken(); }
         else { return T_EOF; }
+    }
+    else if (std::isspace(this->currStr[this->charPos])) { this->charPos++; return this->nextToken(); }
+    else if (std::isdigit(this->currStr[this->charPos])) { return this->recordNum(); }
+    else if (this->currStr[this->charPos] == '+') { return T_PLUS; }
+    else if (this->currStr[this->charPos] == '-') { return T_MINUS; }
+    else if (this->currStr[this->charPos] == '*') { return T_MULTIPLY; }
+    else if (this->currStr[this->charPos] == '/') { return T_DIVIDE; }
+    else if (this->currStr[this->charPos] == '(') { return T_OPENPAREN; }
+    else if (this->currStr[this->charPos] == ')') { return T_CLOSEPAREN; }
+    else if (this->currStr[this->charPos] == ';') { return T_SEMICOLON; }
+    else if (this->currStr[this->charPos] == 'm') {
+        if (this->charPos + 1 > (unsigned) this->currStr.length()) {
+            scanError(this->line, this->currStr[this->charPos]);
+        }
+        else if (this->currStr[this->charPos + 1] == 'o') {
+            if (this->charPos + 2 >= (unsigned) this->currStr.length()) {
+                scanError(this->line, this->currStr[this->charPos]);
+            }
+            else if (this->currStr[this->charPos + 2] == 'd') { return T_MODULO; }
+            else { scanError(this->line, this->currStr[this->charPos + 2]); }
+        } else { scanError(this->line, this->currStr[this->charPos + 1]); }
     }
     else { scanError(this->line, this->currStr[this->charPos]); }
     return T_NEWLN; // should never reach here.
@@ -45,7 +54,7 @@ Token Scanner::recordNum() {
     int temp = this->charPos;
     result += this->currStr[temp];
     
-    while (this->currStr.length() - 1 >= temp + 1
+    while (this->currStr.length() > temp + 1
         && std::isdigit(this->currStr[temp + 1])
         && !std::isspace(this->currStr[temp + 1])) { result += this->currStr[temp + 1]; temp++; }
     

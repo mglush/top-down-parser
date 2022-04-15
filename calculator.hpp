@@ -11,7 +11,7 @@
 class Scanner {
     int line;
     int value;
-    int charPos; // keeps track of the position processed at the time.
+    unsigned int charPos; // keeps track of the position processed at the time.
     std::string currStr; // the string that must be processed.
 
 public:

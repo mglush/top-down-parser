@@ -1,7 +1,7 @@
 require_relative 'testlib'
 
 prepare do
-	executable "./oracle"
+	executable "./calculator"
 	testing "./calculator"
 
 
