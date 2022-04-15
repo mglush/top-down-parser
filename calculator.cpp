@@ -51,7 +51,7 @@ Token Scanner::nextToken() {
 // helper function for when a number is encountered.
 Token Scanner::recordNum() {
     std::string result;
-    int temp = this->charPos;
+    unsigned int temp = this->charPos;
     result += this->currStr[temp];
     
     while (this->currStr.length() > temp + 1
