@@ -4,8 +4,10 @@
 The parser successfully scans (with the -s flag), parses (with no flag), and evaluates (with the -e flag) arithmetic expressions for the following context-free grammar:
 
 Start	    →	ExprList
+
 ExprList	→	ExprList ; Expression
             |	Expression
+            
 Expression	→	Expression + Expression
             |	Expression - Expression
             |	Expression * Expression
