@@ -1,3 +1,6 @@
+// calculator.hpp
+// Michael Glushchenko
+
 #pragma once
 
 #include "helpers.hpp"
@@ -11,17 +14,19 @@
 class Scanner {
     int line;
     int value;
-    unsigned int charPos; // keeps track of the position processed at the time.
-    std::string currStr; // the string that must be processed.
+    unsigned int charPos;
+    std::string currStr;
 
 public:
     Token nextToken();
+    // helper function for when a number
+    // is encountered; functino records that
+    // number into value member variable.
+    Token recordNum();
     void eatToken(Token);
     
     int lineNumber();
     int getNumberValue();
-
-    Token recordNum();
     
     Scanner();
 };
@@ -37,6 +42,18 @@ class Parser {
     std::stack<std::string> my_stack;
     std::string final_result;
 
+    //-----------------------------------------------------------------
+    // the implementation uses the following LL(1) CFG:
+    //-----------------------------------------------------------------
+    // start -> expressionA expressionList
+    // expressionList -> ; expressionA expressionList | ε
+    // expressionA -> termA expressionB
+    // expressionB -> + termA expressionB | - termA expressionB | ε
+    // termA -> factor termB
+    // termB -> * factor termB | / factor termB | mod factor termB | ε
+    // factor -> (expressionA) | num
+    //-----------------------------------------------------------------
+
     void start();
     void expressionList();
     void expressionA();
@@ -47,6 +64,6 @@ class Parser {
     
 public:
     void parse();
-    
+
     Parser(bool);
 };

@@ -1,3 +1,5 @@
+// calculator.cpp
+// Michael Glushchenko
 
 #include "calculator.hpp"
 #include <string>
@@ -45,7 +47,6 @@ Token Scanner::nextToken() {
     return T_NEWLN; // should never reach here.
 }
 
-// helper function for when a number is encountered.
 Token Scanner::recordNum() {
     std::string result;
     unsigned int temp = this->charPos;
@@ -63,12 +64,12 @@ void Scanner::eatToken(Token toConsume) {
 
     if (tokenToString(next) != tokenToString(toConsume)) { mismatchError(this->line, toConsume, next); }
     else {
-        if (next == T_PLUS || next == T_MINUS || next == T_MULTIPLY || next == T_DIVIDE ||
-            next == T_OPENPAREN || next == T_CLOSEPAREN) { this->charPos++; }
+        if (next == T_PLUS || next == T_MINUS || next == T_MULTIPLY ||
+            next == T_DIVIDE || next == T_OPENPAREN || next == T_CLOSEPAREN) { this->charPos++; }
         else if (next == T_MODULO) { this->charPos += 3; }
         else if (next == T_NUMBER) { this->charPos += std::to_string(this->value).length(); }
         else if (next == T_SEMICOLON) { this->line++; this->charPos++; }
-        else { }
+        else { /* do nothing for T_EOF and T_NEWLN */ }
     }
 }
 
@@ -92,10 +93,7 @@ void Parser::start() { expressionA(); expressionList(); }
 void Parser::expressionList() {
     switch (scanner.nextToken()) {
         case T_SEMICOLON: scanner.eatToken(T_SEMICOLON);
-                        if (this->evaluate) {
-                            this->final_result += my_stack.top() + "\n";
-                            my_stack.pop();
-                        }
+                        if (this->evaluate) { this->final_result += my_stack.top() + "\n"; my_stack.pop(); }
                         expressionA(); expressionList(); break;
         default: break; // epsilon transition, do nothing.
     }
@@ -168,9 +166,7 @@ void Parser::termB() {
 void Parser::factor() {
     switch (scanner.nextToken()) {
         case T_NUMBER: scanner.eatToken(T_NUMBER);
-                        if (this->evaluate) {
-                            my_stack.push(std::to_string(scanner.getNumberValue()));
-                        }
+                        if (this->evaluate) { my_stack.push(std::to_string(scanner.getNumberValue())); }
                         break;
         case T_OPENPAREN: scanner.eatToken(T_OPENPAREN); expressionA(); scanner.eatToken(T_CLOSEPAREN); break;
         default: parseError(scanner.lineNumber(), scanner.nextToken());
