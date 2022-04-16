@@ -1,5 +1,5 @@
 # C++ Implementation of a LL(1) Top-Down Parser.
-# By Michael Glushchenko for UCSB CS160 Spring 2022.
+#### By Michael Glushchenko for UCSB CS160 Spring 2022.
 
 The parser successfully scans (with the -s flag), parses (with no flag), and evaluates (with the -e flag) arithmetic expressions for the following context-free grammar:
 
