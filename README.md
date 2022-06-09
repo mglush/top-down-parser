@@ -1,6 +1,16 @@
 # C++ Implementation of a Top-Down Parser.
 #### By Michael Glushchenko for UCSB CS160 Spring 2022 (Translation of Programming Languages).
 
-Idea: hand-code a parser to learn how parsing works firsr-hand.
+## Idea
+Hand-code a parser to learn how parsing works firsr-hand.
 
-The parser successfully scans (with the -s flag), parses (with no flag), and evaluates (with the -e flag) arithmetic expressions involving addition, subtraction, division, multiplication, modulus, parentheses, and semicolons. Precedence and associativity is maintained throughout.
+## How to Run
+~~~
+git clone https://github.com/mglush/top-down-parser     # clone the repository.
+cd top-down-parser                                      # enter repository folder.
+make clean && make                                      # make the executable.
+echo -n 'expression_goes_here' | ./calculator -s        # expressions are piped into the executable
+~~~
+
+## Some Notes
+In the last line, the expression may involve addition, substraction, multiplication, division, mod, paranthesis. Each expression is separated by a semicolon. The -s flag will output a stream of tokens based on the input expression. The -e flag will evaluate the input expression. No flag provided will result in default parsing functionality, where scan/parse errors are checked but no output is provided.
