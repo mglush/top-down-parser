@@ -11,6 +11,10 @@ cd top-down-parser                                      # enter repository folde
 make clean && make                                      # make the executable.
 echo -n 'expression_goes_here' | ./calculator -s        # expressions are piped into the executable
 ~~~
+where 'expression_goes_here' is a substituted by a regular arithmetic expression you would like to evaluate.
 
 ## Some Notes
-In the last line, the expression may involve addition, substraction, multiplication, division, mod, paranthesis. Each expression is separated by a semicolon. The -s flag will output a stream of tokens based on the input expression. The -e flag will evaluate the input expression. No flag provided will result in default parsing functionality, where scan/parse errors are checked but no output is provided.
+  - In the last line, the expression may involve addition, substraction, multiplication, division, mod, paranthesis. Each expression is separated by a semicolon.
+  - The -s flag will output a stream of tokens based on the input expression.
+  - The -e flag will evaluate the input expression.
+  - No flag provided will result in default parsing functionality, where scan/parse errors are checked but no output is provided.
