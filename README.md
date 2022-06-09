@@ -6,7 +6,7 @@ Hand-code a parser to learn how parsing works firsr-hand.
 
 ## How to Run
 ~~~
-git clone https://github.com/mglush/top-down-parser     # clone the repository.
+git clone git@github.com:mglush/top-down-parser.git     # clone the repository.
 cd top-down-parser                                      # enter repository folder.
 make clean && make                                      # make the executable.
 echo -n 'expression_goes_here' | ./calculator -s        # expressions are piped into the executable
